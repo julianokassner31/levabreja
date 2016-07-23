@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<title>#_CADASTRO_#</title>
+	<h:outputStylesheet name="css/estilo.css" />
+</h:head>
+<body>
+	
+	<div class="ui-fluid">
+	
+		<p:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-4"
+			 styleClass="ui-panelgrid-blank">
+			 
+			 <p:growl id="growl" />
+			 
+			 <h:form id="formCliente">
+
+				<p:panel header="Cadastre-se">
+
+					
+
+					<p:column>
+						<h:outputLabel value="Nome" for="nome" />
+
+						<p:inputText id="nome" required="true" requiredMessage="Nome: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.nome}" />
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="CPF" for="cpf" />
+					</p:column>
+					<p:column>
+						<p:inputMask id="cpf" required="true" requiredMessage="CPF: Campo obrigatório"
+							value="#{actionCadastroCliente.cpfDigitado}" mask="999.999.999-99">
+							<f:validator validatorId="cpfCnpjValidador"/>
+							<p:ajax event="keyup" listener="#{actionCadastroCliente.verificarSeCpfExiste}"
+								update="growl" delay="1000"/>
+						</p:inputMask>
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Telefone" for="telefone" />
+					</p:column>
+					<p:column>
+						<p:inputMask id="telefone" required="true" requiredMessage="Telefone: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.telefone}" mask="(99)9-9999-9999"/>
+					</p:column>
+					
+					<p:column>
+						<h:outputLabel value="Email" for="email" />
+					</p:column>
+					<p:column>
+						<p:inputText id="email" required="true" requiredMessage="Email: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.email}" >
+							<f:validator validatorId="emailValidator"/>
+							</p:inputText>
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Rua" for="rua" />
+					</p:column>
+					<p:column>
+						<p:inputText id="rua" required="true" requiredMessage="Rua: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.rua}" />
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Número" for="numero" />
+					</p:column>
+					<p:column>
+						<pe:inputNumber id="numero" decimalPlaces="0"
+							value="#{actionCadastroCliente.novoCliente.numero}" required="true" 
+							requiredMessage="Numero: Campo obrigatório"/>
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Complemento" for="complemento" />
+					</p:column>
+					<p:column>
+						<p:inputTextarea id="complemento" rows="5"
+							value="#{actionCadastroCliente.novoCliente.complemento}" />
+					</p:column>
+					
+					<p:column>
+						<h:outputLabel value="Bairro" for="bairro" />
+					</p:column>
+					<p:column>
+						<p:inputText id="bairro" required="true" requiredMessage="Bairro: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.bairro}" />
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Usuário" for="usuario" />
+					</p:column>
+					<p:column>
+						<p:inputText id="usuario" required="true" requiredMessage="Usuário: Campo obrigatório"
+							value="#{actionCadastroCliente.loginDigitado}" >
+							<p:ajax event="keyup" delay="1000" listener="#{actionCadastroCliente.verificarSeLoginExiste}" update="growl"/>
+							<f:validateLength minimum="4" />
+						</p:inputText> 
+					</p:column>
+
+					<p:column>
+						<h:outputLabel value="Senha" for="senha" />
+					</p:column>
+					<p:column>
+						<p:password id="senha" required="true" requiredMessage="Senha: Campo obrigatório"
+							value="#{actionCadastroCliente.novoCliente.senha}"
+							match="re-senha" feedback="true"
+							promptLabel="Digite a senha" weakLabel="Fraca" goodLabel="Boa"
+							strongLabel="Ótima" />
+					</p:column>
+					<p:column>
+						<h:outputLabel value="Re-Senha" for="re-senha" />
+					</p:column>
+					<p:column>
+						<p:password id="re-senha"
+							value="#{actionCadastroCliente.novoCliente.senha}"
+							feedback="true" promptLabel="Repita a senha"
+							weakLabel="Fraca" goodLabel="Boa" strongLabel="Ótima"/>
+					</p:column>
+					<p:commandButton value="Enviar"
+						actionListener="#{actionCadastroCliente.salvar()}"
+						update="formCliente growl" />
+				</p:panel>
+			</h:form>
+		</p:panelGrid>
+	</div>
+</body>
+</html>

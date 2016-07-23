@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/template/layout.xhtml">
+
+	<ui:define name="title">
+		Entregadores
+	</ui:define>
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionEntregador.usuarioEmpresaLogado.nome}
+					<p:commandButton
+						actionListener="#{actionEntregador.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:growl id="growl" />
+		<h:form id="formCad">
+			<p:panel header="Cadastrar Entregador">
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-6, ui-grid-col-6"
+					styleClass="ui-panelgrid-blank">
+
+					<p:column>
+						<p:outputLabel value="Nome" for="nome" />
+					</p:column>
+					<p:column>
+						<p:inputText id="nome"
+							value="#{actionEntregador.novoEntregador.nome}" required="true"
+							requiredMessage="Nome: Campo obrigatório" />
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="Telefone" for="telefone" />
+					</p:column>
+					<p:column>
+						<p:inputMask id="telefone" mask="(99)9-9999-9999"
+							value="#{actionEntregador.novoEntregador.telefone}"
+							required="true" requiredMessage="Telefone: Campo obrigatório" />
+					</p:column>
+
+					<p:commandButton value="Cadastrar"
+						actionListener="#{actionEntregador.salvar()}" update="formCad growl" />
+				</p:panelGrid>
+			</p:panel>
+
+			<p:dataTable id="ent" var="ent"
+				value="#{actionEntregador.listaDeEntregadores}"
+				selection="#{actionEntregador.entregadorSelecionado}"
+				selectionMode="single" rowKey="#{ent.idEntregador}">
+
+				<p:ajax event="rowSelect" update=":formEditar" listener="#{actionEntregador.listarPedidosDoEntregador}"
+					oncomplete="PF('dlgEditar').show();" />
+
+				<f:facet name="header">
+				Entregadores cadastrados
+			</f:facet>
+
+				<p:column headerText="Nome">
+					<h:outputText value="#{ent.nome}" />
+				</p:column>
+
+				<p:column headerText="Telefone">
+					<h:outputText value="#{ent.telefone}" />
+				</p:column>
+
+				<p:column headerText="Ativo">
+					<h:outputText value="#{ent.ativado}" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+		<p:dialog header="Alterar Entregador" modal="true"
+			widgetVar="dlgEditar" height="300px" width="250px" resizable="false">
+			<h:form id="formEditar">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:column>
+						<p:outputLabel value="Nome" for="nome" />
+						<p:inputText id="nome" 
+							value="#{actionEntregador.entregadorSelecionado.nome}"
+							style="display:block" />
+						</p:column>
+
+						<p:column>
+						<p:outputLabel value="Telefone" for="telefone" />
+						<p:inputMask id="telefone" 
+							value="#{actionEntregador.entregadorSelecionado.telefone}"
+							style="display:block" />
+						</p:column>
+
+						<p:column>
+							<p:outputLabel value="Ativo" for="ativo" />
+							<p:selectBooleanCheckbox id="ativo"
+								value="#{actionEntregador.entregadorSelecionado.ativado}"
+								style="display:block" />
+						</p:column>
+					</p:panelGrid>
+
+					<p:commandButton value="Atualizar"
+						actionListener="#{actionEntregador.atualizar}" update=":formCad growl"
+						oncomplete="PF('dlgEditar').hide();" />
+
+					<p:commandButton value="Apagar"
+						actionListener="#{actionEntregador.apagar}" update=":formCad growl"
+						oncomplete="PF('dlgEditar').hide();">
+						<p:confirm header="Confirmar ação" message="Deseja excluir?" icon="ui-icon-alert"/>
+					</p:commandButton>
+						
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</h:form>
+			</p:dialog>
+		</ui:define>
+	</ui:composition>
+</html>

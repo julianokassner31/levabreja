@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition template="/WEB-INF/template/layoutadmin.xhtml">
+
+	<ui:define name="title">
+		Empresas
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo Admin
+					<p:button outcome="login" value="Logout"/>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+	<h:form id="formCad">
+		<p:growl id="growl" />
+		<p:panel header="Cadastro de Empresas">
+
+			<p:panelGrid columns="6" styleClass="ui-panelgrid-blank">
+
+				<p:column>
+					<p:outputLabel value="CNPJ" for="cnpj" />
+				</p:column>
+				<p:column>
+					<p:inputMask id="cnpj"
+						value="#{actionCadastroEmpresa.novaEmpresa.cnpj}"
+						mask="99.999.999/9999-99" required="true"
+						requiredMessage="CNPJ: Campo obrigatório">
+						<f:validator validatorId="cpfCnpjValidador" />
+					</p:inputMask>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Inscr. Estadual" for="ie" />
+				</p:column>
+				<p:column>
+					<p:inputText id="ie"
+						value="#{actionCadastroEmpresa.novaEmpresa.ie}" required="true"
+						requiredMessage="Inscr. Estadual: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Nome Fantasia" for="nome" />
+				</p:column>
+				<p:column>
+					<p:inputText id="nome"
+						value="#{actionCadastroEmpresa.novaEmpresa.nomeFantasia}"
+						required="true" requiredMessage="Nome Fantasia: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Telefone" for="telefone" />
+				</p:column>
+				<p:column>
+					<p:inputMask id="telefone"
+						value="#{actionCadastroEmpresa.novaEmpresa.telefone}"
+						required="true" requiredMessage="Telefone: Campo obrigatório"
+						mask="(99)9-9999-9999" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Email" for="email" />
+				</p:column>
+				<p:column>
+					<p:inputText id="email"
+						value="#{actionCadastroEmpresa.novaEmpresa.email}" required="true"
+						requiredMessage="Email: Campo obrigatório">
+						<f:validator validatorId="emailValidator" />
+					</p:inputText>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Rua" for="rua" />
+				</p:column>
+				<p:column>
+					<p:inputText id="rua"
+						value="#{actionCadastroEmpresa.novaEmpresa.rua}" required="true"
+						requiredMessage="Rua: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Número" for="numero" />
+				</p:column>
+				<p:column>
+					<pe:inputNumber id="numero"
+						value="#{actionCadastroEmpresa.novaEmpresa.numero}"
+						required="true" requiredMessage="Número: Campo obrigatório"
+						decimalPlaces="0" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Complemento" for="compl" />
+				</p:column>
+				<p:column>
+					<p:inputTextarea id="compl" cols="23"
+						value="#{actionCadastroEmpresa.novaEmpresa.complemento}"/>
+					</p:column>
+
+				<p:column>
+					<p:outputLabel value="Bairro" for="bairro" />
+				</p:column>
+				<p:column>
+					<p:inputText id="bairro"
+						value="#{actionCadastroEmpresa.novaEmpresa.bairro}"
+						required="true" requiredMessage="Bairro: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Dia Pagamento" for="pagamento" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="pagamento" style="display:block"
+						value="#{actionCadastroEmpresa.novaEmpresa.pagamento}"
+						required="true"
+						requiredMessage="Data Pagamento: Campo obrigatório">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItems var="dia"
+							value="#{actionCadastroEmpresa.diasDoMes}"
+							itemLabel="#{dia.diaDoMes}" itemValue="#{dia.diaDoMes}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Mensalidade" for="mensalidade" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="mensalidade" style="display:block"
+						value="#{actionCadastroEmpresa.novaEmpresa.mensalidade.idMensalidade}"
+						required="true" requiredMessage="Mensalidade: Campo obrigatório">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{actionCadastroEmpresa.listaDeMensalidades}" var="men"
+							itemValue="#{men.idMensalidade}"
+							itemLabel="#{men.nome} R$ #{men.valor}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Nome Usuário" for="usuario" />
+				</p:column>
+				<p:column>
+					<p:inputText id="usuario"
+						value="#{actionCadastroEmpresa.novoUsuarioEmpresa.nome}"
+						required="true" requiredMessage="Usuário: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Login" for="login" />
+				</p:column>
+				<p:column>
+					<p:inputText id="login"
+						value="#{actionCadastroEmpresa.loginDigitado}" required="true"
+						requiredMessage="Login: Campo obrigatório">
+						<p:ajax event="keyup"
+							listener="#{actionCadastroEmpresa.verificarSeLoginExiste}"
+							update="growl" delay="1000" />
+						<f:validateLength minimum="4" />
+					</p:inputText>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Senha" for="senha" />
+				</p:column>
+				<p:column>
+					<p:password id="senha" match="re-senha" feedback="true"
+						promptLabel="Digite a senha" goodLabel="Boa" weakLabel="Fraca"
+						strongLabel="Ótima" required="true"
+						requiredMessage="Senha: Campo obrigatório"
+						value="#{actionCadastroEmpresa.novoUsuarioEmpresa.senha}" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Repita a senha" for="re-senha" />
+				</p:column>
+				<p:column>
+					<p:password id="re-senha"
+						value="#{actionCadastroEmpresa.novoUsuarioEmpresa.senha}"
+						feedback="true" promptLabel="Repita a senha" goodLabel="Boa" weakLabel="Fraca"
+						strongLabel="Ótima" required="true"
+						requiredMessage="Repita : Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Ativa" />
+				</p:column>
+				<p:column>
+					<p:selectBooleanCheckbox
+						value="#{actionCadastroEmpresa.novaEmpresa.ativada}"
+						required="true" requiredMessage="Ativa: Campo obrigatório" />
+				</p:column>
+
+				<p:commandButton actionListener="#{actionCadastroEmpresa.salvar()}"
+					value="Salvar" update="formCad" />
+
+			</p:panelGrid>
+		</p:panel>
+		<p:dataTable var="emp" id="emp"
+			value="#{actionCadastroEmpresa.listaDeEmpresas}" reflow="true"
+			selection="#{actionCadastroEmpresa.empresaSelecionada}"
+			selectionMode="single" rowKey="#{emp.idEmpresa}">
+
+			<p:ajax event="rowSelect" update=":formEditar"
+				oncomplete="PF('dlgEditar').show();" />
+
+			<f:facet name="header">
+					Lista de Empresas
+				</f:facet>
+
+			<p:column headerText="Id">
+				<p:outputLabel value="#{emp.idEmpresa}" />
+			</p:column>
+
+			<p:column headerText="Nome da empresa">
+				<p:outputLabel value="#{emp.nomeFantasia}" />
+			</p:column>
+
+			<p:column headerText="Data Cadastro">
+				<p:outputLabel value="#{emp.dataCadastro}" />
+			</p:column>
+
+			<p:column headerText="Dia Pagto">
+				<p:outputLabel value="#{emp.pagamento}" />
+			</p:column>
+
+			<p:column headerText="Valor">
+				<p:outputLabel value="R$ #{emp.mensalidade.valor}" />
+			</p:column>
+
+			<p:column headerText="Ativa">
+				<p:outputLabel value="#{emp.ativada}" />
+			</p:column>
+
+		</p:dataTable>
+	</h:form>
+
+	<p:dialog header="Alterar" modal="true" widgetVar="dlgEditar"
+		height="300px" width="250px" resizable="false">
+		<h:form id="formEditar">
+			<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+				<p:column>
+					<p:outputLabel value="Telefone" for="telefone" />
+				</p:column>	
+				<p:column>
+					<p:inputMask id="telefone" mask="(99)9999-9999"
+						value="#{actionCadastroEmpresa.empresaSelecionada.telefone}" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Email" for="email" />
+				</p:column>	
+				<p:column>
+					<p:inputText id="email"
+						value="#{actionCadastroEmpresa.empresaSelecionada.email}">
+						<f:validator validatorId="emailValidator" />
+					</p:inputText>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Rua" for="rua" />
+				</p:column>	
+				<p:column>	
+					<p:inputText id="rua"
+						value="#{actionCadastroEmpresa.empresaSelecionada.rua}" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Número" for="numero" />
+				</p:column>	
+				<p:column>
+					<pe:inputNumber id="numero"
+						value="#{actionCadastroEmpresa.empresaSelecionada.numero}"
+						decimalPlaces="0" />
+				</p:column>
+				
+				<p:column>
+					<p:outputLabel value="Complemento" for="compl" />
+				</p:column>
+				<p:column>
+					<p:inputTextarea id="compl" cols="23"
+						value="#{actionCadastroEmpresa.empresaSelecionada.complemento}"/>
+					</p:column>
+
+				<p:column>
+					<p:outputLabel value="Bairro" for="bairro" />
+				</p:column>
+				<p:column>
+					<p:inputText id="bairro"
+						value="#{actionCadastroEmpresa.empresaSelecionada.bairro}"
+						required="true" requiredMessage="Bairro: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Dia Pagamento" for="pagamento" />
+				</p:column>	
+				<p:column>	
+					<p:selectOneMenu id="pagamento"
+						value="#{actionCadastroEmpresa.empresaSelecionada.pagamento}"
+						required="true"
+						requiredMessage="Data Pagamento: Campo obrigatório">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItems var="dia"
+							value="#{actionCadastroEmpresa.diasDoMes}"
+							itemLabel="#{dia.diaDoMes}" itemValue="#{dia.diaDoMes}" />
+					</p:selectOneMenu>
+				</p:column>
+				<p:column>
+					<p:outputLabel value="Mensalidade" for="mensalidade" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="mensalidade" style="display:block"
+						value="#{actionCadastroEmpresa.empresaSelecionada.mensalidade.idMensalidade}"
+						required="true" requiredMessage="Mensalidade: Campo obrigatório">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{actionCadastroEmpresa.listaDeMensalidades}" var="men"
+							itemValue="#{men.idMensalidade}"
+							itemLabel="#{men.nome} R$ #{men.valor}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Ativa" for="ativa" />
+				</p:column>	
+				<p:column>
+					<p:selectBooleanCheckbox id="ativa"
+						value="#{actionCadastroEmpresa.empresaSelecionada.ativada}" />
+				</p:column>
+			</p:panelGrid>
+			<p:commandButton value="Atualizar"
+				actionListener="#{actionCadastroEmpresa.atualizar}"
+				update=":formCad" oncomplete="PF('dlgEditar').hide();" />
+
+			<p:commandButton value="Apagar"
+				actionListener="#{actionCadastroEmpresa.apagar}"
+				update=":formCad" oncomplete="PF('dlgEditar').hide();">
+				<p:confirm header="Confirmar ação" message="Deseja excluir?" icon="ui-icon-alert"/>
+			</p:commandButton>
+			
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        		<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			
+		</h:form>
+	</p:dialog>
+
+</ui:define>
+</ui:composition>
+
+</html>
+

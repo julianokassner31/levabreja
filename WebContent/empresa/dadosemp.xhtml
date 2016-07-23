@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/template/layout.xhtml">
+
+	<ui:define name="title">
+		Alterar Dados
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionDadosEmpresa.usuarioEmpresaLogado.nome}
+					<p:commandButton
+						actionListener="#{actionDadosEmpresa.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="formCad">
+			<p:growl id="growl" />
+			<p:panel header="Alterar Dados Cadastrais">
+				<p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6"
+					styleClass="ui-panelgrid-blank">
+				<p:column>
+					<p:outputLabel value="CNPJ" for="cnpj" />
+				</p:column>
+				<p:column>
+					<p:inputMask id="cnpj" disabled="true"
+						placeholder="#{actionDadosEmpresa.empresa.cnpj}"
+						mask="99.999.999/9999-99" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Inscr. Estadual" for="ie" />
+				</p:column>
+				<p:column>
+					<p:inputText id="ie" value="#{actionDadosEmpresa.empresa.ie}" disabled="true" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Nome Fantasia" for="nome" />
+				</p:column>
+				<p:column>
+					<p:inputText id="nome"
+						value="#{actionDadosEmpresa.empresa.nomeFantasia}" disabled="true" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Telefone" for="telefone" />
+				</p:column>
+				<p:column>
+					<p:inputMask id="telefone"
+						value="#{actionDadosEmpresa.empresa.telefone}"
+						required="true" requiredMessage="Telefone: Campo obrigatório"
+						mask="(99)9-9999-9999" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Email" for="email" />
+				</p:column>
+				<p:column>
+					<p:inputText id="email"
+						value="#{actionDadosEmpresa.empresa.email}" required="true"
+						requiredMessage="Email: Campo obrigatório">
+						<f:validator validatorId="emailValidator" />
+					</p:inputText>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Rua" for="rua" />
+				</p:column>
+				<p:column>
+					<p:inputText id="rua"
+						value="#{actionDadosEmpresa.empresa.rua}" required="true"
+						requiredMessage="Rua: Campo obrigatório" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Número" for="numero" />
+				</p:column>
+				<p:column>
+					<pe:inputNumber id="numero"
+						value="#{actionDadosEmpresa.empresa.numero}"
+						required="true" requiredMessage="Número: Campo obrigatório"
+						decimalPlaces="0" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Complemento" for="compl" />
+				</p:column>
+				<p:column>
+					<p:inputTextarea id="compl" cols="23"
+						value="#{actionDadosEmpresa.empresa.complemento}"/>
+					</p:column>
+
+				<p:column>
+					<p:outputLabel value="Bairro" for="bairro" />
+				</p:column>
+				<p:column>
+					<p:inputText id="bairro"
+						value="#{actionDadosEmpresa.empresa.bairro}"
+						required="true" requiredMessage="Bairro: Campo obrigatório" />
+				</p:column>
+				
+				<p:column>
+					<p:outputLabel value="Taxa de Entrega" for="txe" />
+				</p:column>
+				<p:column>
+					<pe:inputNumber id="txe" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+						value="#{actionDadosEmpresa.empresa.taxaEntrega}"
+						required="true" requiredMessage="Taxa: Campo obrigatório" />
+				</p:column>
+				<p:column>
+					<p:commandButton value="Alterar Dados" actionListener="#{actionDadosEmpresa.atualizar}"
+						update="formCad"/>
+				</p:column>		
+			</p:panelGrid>
+			
+		</p:panel>
+		
+	</h:form>
+
+</ui:define>
+</ui:composition>
+</html>
+

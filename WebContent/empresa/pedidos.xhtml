@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:mp="http://primefaces.org/ui/material"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/template/layout.xhtml">
+
+	<ui:define name="title">
+		Pedidos de Clientes
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionListaDePedidos.usuarioEmpresaLogado.nome}
+					<p:commandButton
+						actionListener="#{actionListaDePedidos.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+	<p:growl id="notificacao" />
+		<h:form id="formTipoBusca">
+			<p:growl id="growl" />
+			<p:panel header="Buscar Pedidos">
+				<p:panelGrid columns="1"
+					columnClasses="ui-grid-col-6, ui-grid-col-6"
+					styleClass="ui-panelgrid-blank">
+					<p:column>
+					<p:selectOneMenu id="status" value="#{actionListaDePedidos.status}" style="width:150px">
+						<f:selectItem itemLabel="Todos" noSelectionOption="false" itemValue="todos"/>
+						<f:selectItems value="#{actionListaDePedidos.listaDeStatus}"
+							var="st" itemLabel="#{st.status}" itemValue="#{st.status}" />
+					</p:selectOneMenu>
+					
+					<p:commandButton value="Buscar" delay="1000"
+					actionListener="#{actionListaDePedidos.verificarStatus}"
+					update="formTipoBusca" />
+					</p:column>
+				</p:panelGrid>
+				
+			</p:panel>
+			<p:dataTable id="ped" var="ped" value="#{actionListaDePedidos.listaDePedidos}"
+				rowKey="#{ped.idPedido}" reflow="true" rows="6" paginator="true" 
+				selectionMode="single" selection="#{actionListaDePedidos.pedidoSelecionado}"
+				emptyMessage="Nenhum registro encontrado">
+
+				<p:ajax event="rowSelect" oncomplete="PF('dlgEditar').show();"
+					update="formEditar" listener="#{actionListaDePedidos.buscarProdutos}"/>
+
+				<f:facet name="header">
+				#{actionListaDePedidos.status}
+			</f:facet>
+				
+				<p:column headerText="Nome Cliente" filterBy="#{ped.cliente.nome}" filterMatchMode="contains">
+					<p:outputLabel value="#{ped.cliente.nome}" />
+				</p:column>
+				
+				<p:column headerText="Valor do Pedido">
+					<p:outputLabel value="#{ped.valorTotal}">
+						<f:convertNumber currencyCode="BRL" type="currency" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Endereço">
+					<p:outputLabel value="#{ped.cliente.rua} #{ped.cliente.numero}, #{ped.cliente.bairro} " />
+				</p:column>
+				
+				<p:column headerText="End. Temp.">
+					<p:outputLabel value="#{ped.obs}" />
+				</p:column>
+				
+				<p:column headerText="Status" sortBy="#{ped.status}">
+					<p:outputLabel value="#{ped.status} " />
+				</p:column>
+				
+				<p:column headerText="Entregador">
+					<p:outputLabel value="#{ped.entregador} " />
+				</p:column>
+				
+				<p:column headerText="Feito em" sortBy="#{ped.dataPedido}">
+					<p:outputLabel value="#{ped.dataPedido}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Saiu em">
+					<p:outputLabel value="#{ped.dataSaiu}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Finalizado em">
+					<p:outputLabel value="#{ped.dataFim}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+					</p:outputLabel>
+				</p:column>
+
+				<f:facet name="footer">
+				Número de Pedidos = #{actionListaDePedidos.quantidadePedidos}
+			</f:facet>
+			</p:dataTable>
+		</h:form>
+		
+		<p:dialog header="Alterar Status do Pedido" modal="true" id="dlgEditar"
+			widgetVar="dlgEditar" height="400px" width="400px" resizable="false">
+			<h:form id="formEditar">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:column>
+						<p:outputLabel value="Entregador" for="entregador" />
+						<p:selectOneMenu id="entregador"
+							value="#{actionListaDePedidos.pedidoSelecionado.entregador}"
+							style="display:block" disabled="#{actionListaDePedidos.pedidoSelecionado.status == 'entregue'
+							|| actionListaDePedidos.pedidoSelecionado.status == 'cancelado'
+							|| actionListaDePedidos.pedidoSelecionado.status == 'saiu para entrega'}">
+							<f:selectItems var="ent" value="#{actionListaDePedidos.listaDeEntregadores}"
+								itemLabel="#{ent.nome}" itemValue="#{ent.nome}"/>
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="Status" for="status" />
+						<p:selectOneMenu id="status" value="#{actionListaDePedidos.pedidoSelecionado.status}"
+							disabled="#{actionListaDePedidos.pedidoSelecionado.status == 'entregue'
+							|| actionListaDePedidos.pedidoSelecionado.status == 'cancelado'}"
+							style="display:block">
+							<f:selectItem itemValue="saiu para entrega" itemLabel="Saiu para Entrega"  noSelectionOption="false"/>
+							<f:selectItem itemValue="entregue" itemLabel="Entregue" noSelectionOption="false"
+								itemDisabled="#{actionListaDePedidos.pedidoSelecionado.status == 'em espera'}"/>
+						</p:selectOneMenu>
+					</p:column>
+					
+					<p:dataTable value="#{actionListaDePedidos.listaDeProdutos}" var="prod">
+						<f:facet name="header">
+							Produtos do pedido
+						</f:facet>
+						<p:column headerText="Nome">
+							<p:outputLabel value="#{prod.nomeProduto}"/>
+						</p:column>
+						
+						<p:column headerText="Valor do Produto">
+							<p:outputLabel value="#{prod.valorProduto}">
+								<f:convertNumber currencyCode="BRL" type="currency" />
+							</p:outputLabel>
+						</p:column>
+						
+						<p:column headerText="Quantidade">
+							<p:outputLabel value="#{prod.quantidade}"/>
+						</p:column>
+						
+						
+						<p:column headerText="Subtotal">
+							<p:outputLabel value="#{prod.subTotal}">
+								<f:convertNumber currencyCode="BRL" type="currency" />
+							</p:outputLabel>
+						</p:column>
+					<f:facet name="footer">
+						Valor total do Pedido 
+						<p:outputLabel value="#{actionListaDePedidos.pedidoSelecionado.valorTotal}">
+							<f:convertNumber currencyCode="BRL" type="currency" />
+						</p:outputLabel>
+					</f:facet>
+					</p:dataTable>
+
+				</p:panelGrid>
+
+				<p:commandButton value="Atualizar"
+					actionListener="#{actionListaDePedidos.atualizar}"
+					oncomplete="PF('dlgEditar').hide();" update="formTipoBusca"/>
+			</h:form>
+		</p:dialog>
+
+		<p:socket onMessage="handleMessage" channel="/notificacao" />
+
+		<script type="text/javascript">
+			function handleMessage(facesmessage) {
+				facesmessage.severity = 'info';
+
+				PF('notificacao').show([ facesmessage ]);
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
+</html>
+

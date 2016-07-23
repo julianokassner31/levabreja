@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/WEB-INF/template/layout.xhtml">
+
+	<ui:define name="title">
+		Produtos
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionProduto.usuarioEmpresaLogado.nome}
+					<p:commandButton
+						actionListener="#{actionProduto.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<p:growl id="growl" />
+		
+		<h:form id="formCad">
+			
+			<p:panel header="Cadastrar Produto">
+				<p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6"
+					styleClass="ui-panelgrid-blank">
+				<p:column>
+					<p:outputLabel value="Nome" for="nome" />
+				</p:column>
+				<p:column>
+					<p:inputText id="nome" value="#{actionProduto.novoProduto.nome}" required="true"
+						requiredMessage="Nome: Campo obrigatório"/>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Valor" for="valor" />
+				</p:column>
+				<p:column>
+					<pe:inputNumber id="valor" decimalPlaces="2" decimalSeparator="," thousandSeparator="." 
+						value="#{actionProduto.novoProduto.valor}" required="true" symbol="R$ "
+						requiredMessage="Valor: Campo obrigatório"/>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Setor" for="setor" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="setor" style="width:133px"  required="true"
+						requiredMessage="Setor: Campo obrigatório" filter="true"
+							filterMatchMode="contains"
+						value="#{actionProduto.novoProduto.setor.idSetor}">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione" />
+						<f:selectItems value="#{actionProduto.listaDeSetores}" var="set"
+							itemValue="#{set.idSetor}" itemLabel="#{set.nome}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Ativar" />
+				</p:column>
+				<p:column>
+					<p:selectBooleanCheckbox
+						value="#{actionProduto.novoProduto.status}" />
+				</p:column>
+				
+				<p:column>
+					<p:commandButton actionListener="#{actionProduto.salvar()}"
+						value="Cadastrar" update=":formCad :formBuscar growl" />
+				</p:column>
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+		
+			<h:form id="formBuscar">
+				<p:panel>
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-3, ui-grid-col-9"
+						styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:selectOneMenu value="#{actionProduto.idSetor}" style="width:150px" filter="true"
+							filterMatchMode="contains">
+								<f:selectItem itemLabel="Todos" noSelectionOption="false" itemValue="0"/>
+								<f:selectItems var="set" value="#{actionProduto.listaDeSetores}"
+							 		itemLabel="#{set.nome}" itemValue="#{set.idSetor}"/>
+							</p:selectOneMenu>
+						</p:column>
+						<p:commandButton value="Buscar" actionListener="#{actionProduto.buscarProdutos}"
+							update="@form:prod"/>
+					</p:panelGrid>
+				</p:panel>
+						
+			<p:dataTable id="prod" var="prod" value="#{actionProduto.listaDeProdutos}"
+				selection="#{actionProduto.produtoSelecionado}" reflow="true" paginator="true" rows="10"
+				selectionMode="single" rowKey="#{prod.idProduto}">
+			
+				<p:ajax event="rowSelect" update=":formEditar"
+					oncomplete="PF('dlgEditar').show();" />
+				
+				<f:facet name="header">
+					Lista de Produtos
+				</f:facet>
+
+				<p:column headerText="Nome">
+					<p:outputLabel value="#{prod.nome}"/>
+				</p:column>
+
+				<p:column headerText="Valor">
+					<p:outputLabel value="#{prod.valor}">
+						<f:convertNumber currencyCode="BRL" type="currency" />
+					</p:outputLabel>
+				</p:column>
+				
+				<p:column headerText="Setor">
+					<p:outputLabel value="#{prod.setor.nome}"/>
+				</p:column>
+				
+				<p:column headerText="Data de Cadastro">
+				<p:outputLabel value="#{prod.dataCadastro}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+				</p:outputLabel>
+			</p:column>
+				
+			<p:column headerText="Ativado">
+				<p:outputLabel value="#{prod.status}" />
+			</p:column>
+			<f:facet name="footer">
+				Quantidade de Produto Cadastros = #{actionProduto.quantidadeProdutos}
+			
+			</f:facet>
+		</p:dataTable>
+	</h:form>
+
+	<p:dialog header="Alterar Produto" modal="true" widgetVar="dlgEditar"
+			height="300px" width="250px" resizable="false">
+			<h:form id="formEditar">
+			<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+				<p:column>
+					<p:outputLabel value="Nome" for="nome" />
+					<p:inputText id="nome"
+						value="#{actionProduto.produtoSelecionado.nome}"
+						style="display:block" />
+				</p:column>
+
+				<p:column>
+					<p:outputLabel value="Valor" for="valor" />
+					<pe:inputNumber id="valor" decimalPlaces="2" decimalSeparator="," thousandSeparator="."
+						value="#{actionProduto.produtoSelecionado.valor}"
+						style="display:block" />
+				</p:column>
+				
+				<p:selectOneMenu id="setor" value="#{actionProduto.produtoSelecionado.setor.idSetor}">
+					<f:selectItems value="#{actionProduto.listaDeSetores}" var="set"
+							itemValue="#{set.idSetor}" itemLabel="#{set.nome}" />
+				</p:selectOneMenu>
+
+				<p:column>
+					<p:outputLabel value="Ativar" for="ativar" />
+					<p:selectBooleanCheckbox id="ativar"
+						value="#{actionProduto.produtoSelecionado.status}"
+						style="display:block" />
+				</p:column>
+			</p:panelGrid>
+
+			<p:commandButton value="Atualizar"
+				actionListener="#{actionProduto.atualizar}" update=":formBuscar growl"
+				oncomplete="PF('dlgEditar').hide();" />
+				
+				<p:commandButton value="Apagar"
+				actionListener="#{actionProduto.apagar}" update=":formBuscar growl"
+				oncomplete="PF('dlgEditar').hide();">
+					<p:confirm header="Confirmar ação" message="Deseja excluir?" icon="ui-icon-alert"/>
+				</p:commandButton>
+				
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+					
+			</h:form>
+			
+			
+			
+		</p:dialog>
+	
+</ui:define>
+</ui:composition>
+</html>
+

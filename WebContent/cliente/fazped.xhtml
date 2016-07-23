@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/template/layoutcliente.xhtml">
+
+	<ui:define name="title">
+		Fazer Pedido
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionFazerPedido.clienteLogado.nome}
+					<p:commandButton
+						actionListener="#{actionFazerPedido.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+	<h:form id="formPedido">
+		<p:growl id="growl" />
+			<p:panel header="Escolher Produtos">
+				
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+
+					<p:column>
+						<p:outputLabel value="Empresa" for="empresa" />
+
+						<p:selectOneMenu
+							value="#{actionFazerPedido.empresaEscolhida.idEmpresa}"
+							disabled="#{actionFazerPedido.botaoEmpresaAtivada}" id="empresa"
+							required="true" requiredMesage="Empresa: Campo requerido" style="display:block">
+							<p:ajax listener="#{actionFazerPedido.listarSetores}" update="setor" />
+							<p:ajax listener="#{actionFazerPedido.listarFormasDePagamentos}"
+								update=":formConcluirPedido:formaPagto" />
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							<f:selectItems value="#{actionFazerPedido.listaDeEmpresas}" var="emp"
+								itemValue="#{emp.idEmpresa}" itemLabel="#{emp.nomeFantasia}" />
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="Setor" for="setor" />
+
+						<p:selectOneMenu value="#{actionFazerPedido.setorEscolhido.idSetor}"
+							id="setor" style="display:block" required="true"
+							requiredMesage="Setor: Campo requerido">
+							<p:ajax listener="#{actionFazerPedido.listarProdutos}"
+								update="produto" />
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							<f:selectItems value="#{actionFazerPedido.listaDeSetores}" var="set"
+								itemValue="#{set.idSetor}" itemLabel="#{set.nome}" />
+						</p:selectOneMenu>
+
+					</p:column>
+					<p:column>
+						<p:outputLabel value="Produto" for="produto" />
+
+						<p:selectOneMenu value="#{actionFazerPedido.codProduto}" id="produto"
+							required="true" requiredMesage="Produto: Campo requerido" style="display:block">
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							<f:selectItems value="#{actionFazerPedido.listaDeProdutos}" var="prod"
+								itemValue="#{prod.idProduto}"
+								itemLabel="#{prod.nome} R$#{prod.valor}" />
+								<p:ajax listener="#{actionFazerPedido.ativarBotaoAdicionarProduto}"
+								update="@form:adicionar" />
+						</p:selectOneMenu>
+					</p:column>
+					
+					<p:column>
+						<p:outputLabel value="Quantidade" for="quant" />
+					</p:column>
+					<p:column>
+						<p:spinner value="#{actionFazerPedido.quantidade}" id="quant" min="1" size="28"
+							required="true" requiredMesage="Quantidade: Campo requerido" style="display:block" >
+						</p:spinner>
+					</p:column>
+					<p:column>
+						<p:commandButton id="adicionar" value="Adicionar"
+							disabled="#{actionFazerPedido.botaoAdicionarProduto}"
+							action="#{actionFazerPedido.adicionarProdutoNaLista}"
+							actionListener="#{actionFazerPedido.desativaBotaoEmpresa}"
+							update=":formPedido:prodEscolhidos :formPedido:empresa" icon="fa fa-plus">
+						</p:commandButton>
+						<p:commandButton id="reset" value="Resetar"
+							action="#{actionFazerPedido.inicio}" update="formPedido" icon="fa fa-refresh"/>
+					</p:column>
+				</p:panelGrid>
+				
+			</p:panel>
+			<p:dataTable id="prodEscolhidos" var="prod" value="#{actionFazerPedido.listaDeProdutosEscolhidos}" reflow="true" rows="15" 
+				paginator="true" selection="#{actionFazerPedido.produtoEscolhido}" selectionMode="single"
+				rowKey="#{prod.idProduto}" emptyMessage="Não há produtos no carrinho.">
+				
+				<p:ajax event="rowSelect" update=":formEditar"
+				oncomplete="PF('dlgEditar').show();" />
+					
+				<f:facet name="header">
+       				 Lista de Produtos - Clique em um item na lista para alterar
+     			 </f:facet>
+   				<p:column headerText="Nome">
+					<p:outputLabel value="#{prod.nome}" />
+				</p:column>
+				<p:column headerText="Quantidade">
+					<p:outputLabel value="#{prod.quantidade}" />
+				</p:column>
+				<p:column headerText="Valor Unitário">
+					<p:outputLabel value="#{prod.valor}">
+						<f:convertNumber currencyCode="BRL" type="currency" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Subtotal">
+					<p:outputLabel value="#{prod.subtotal}">
+						<f:convertNumber currencyCode="BRL" type="currency" />
+					</p:outputLabel>
+				</p:column>
+				<p:column headerText="Empresa">
+					<p:outputLabel value="#{prod.empresa.nomeFantasia}" />
+				</p:column>
+				
+				<f:facet name="footer">
+       				| Total de Itens #{actionFazerPedido.totalDeItens} 
+       				| Valor Total
+       				<p:outputLabel value="#{actionFazerPedido.valorTotal}">
+       					<f:convertNumber currencyCode="BRL" type="currency" />
+       				</p:outputLabel>
+   				 </f:facet>
+			</p:dataTable>
+	</h:form>
+	
+	
+		<p:dialog header="Alterar Pedido" modal="true" widgetVar="dlgEditar"
+			height="300px" width="250px" resizable="false">
+			<h:form id="formEditar">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:column>
+						<p:outputLabel value="Quantidade" for="quant" />
+						<p:spinner value="#{actionFazerPedido.produtoEscolhido.quantidade}" id="quant" min="1"
+							required="true" style="display:block" >
+						</p:spinner>
+					</p:column>
+				</p:panelGrid>
+
+				<p:commandButton value="Atualizar" update=":formPedido:prodEscolhidos" oncomplete="PF('dlgEditar').hide();"
+					actionListener="#{actionFazerPedido.atualizarProdutoNaLista}" />
+				
+				
+				<p:commandButton value="Remover" update=":formPedido:prodEscolhidos" oncomplete="PF('dlgEditar').hide();"
+					actionListener="#{actionFazerPedido.excluirProdutoDaLista}" />
+			</h:form>	
+		</p:dialog>
+	
+	
+	<h:form id="formConcluirPedido">
+		
+		<p:panel header="Observação:">
+			<p:inputTextarea value="#{actionFazerPedido.novoPedido.obs}" cols="30"
+				rows="5" maxlength="200"
+				placeholder="Se o endereço de entrega for diferente do cadastro
+			 					defina-o aqui!" />
+		</p:panel>
+		<p:panel header="Forma de Pagamento">
+			<p:selectOneMenu value="#{actionFazerPedido.novoPedido.formaDePagamento}"
+				id="formaPagto" style="display:block" required="true" requiredMesage="Pagamento: Campo requerido">
+				<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+				<f:selectItems value="#{actionFazerPedido.listaDeFormasDePagamento}"
+					var="pagto" itemLabel="#{pagto.descricao}"
+					itemValue="#{pagto.descricao}" />
+			</p:selectOneMenu>
+		</p:panel>
+
+		<p:commandButton value="Concluir Pedido"
+			actionListener="#{actionFazerPedido.salvar}" update="@all" />
+	</h:form>
+	
+</ui:define>
+</ui:composition>
+</html>
+

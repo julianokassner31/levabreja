@@ -1,0 +1,25 @@
+.ui-widget-content{
+	font-size: 14px;
+	color:#000;
+	
+}
+
+.ui-widget-header{
+	background: #555753;
+	color: #FFF;
+	font-size: 18px !important;
+	
+	text-align:center;
+	margin:auto;
+}
+
+.ui-button{
+	background: #668df1 !important;
+	color: #FFF !important;
+	margin:5px auto;
+	font-size: 16px !important;
+	text-shadow: none !important;
+}
+
+
+

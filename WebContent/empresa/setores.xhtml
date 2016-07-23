@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/WEB-INF/template/layout.xhtml">
+
+	<ui:define name="title">
+		Setores
+	</ui:define>
+
+	<ui:define name="logout">
+		<h:form>
+			<p:panel>
+				<p:panelGrid column="1">
+				Bem vindo #{actionSetor.usuarioEmpresaLogado.nome}
+					<p:commandButton
+						actionListener="#{actionSetor.login.logout()}"
+						value="logout" />
+				</p:panelGrid>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:growl id="growl" />
+		
+		<h:form id="formCad">
+			
+			<p:panel header="Cadastrar Setor">
+				<p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6"
+					styleClass="ui-panelgrid-blank">
+
+					<p:column>
+						<p:outputLabel value="Nome" for="nome" />
+					</p:column>
+					<p:column>
+						<p:inputText id="nome" value="#{actionSetor.novoSetor.nome}" 
+						required="true" requiredMessage="Nome: Campo Obrigatório"/>
+					</p:column>
+					<p:column>
+						<p:commandButton value="Cadastrar" style="display:block"
+							actionListener="#{actionSetor.salvar()}"
+							update="formCad, :itens:setado" required="true"
+							requiredMessage="Nome: Campo obrigatório" />
+					</p:column>
+				</p:panelGrid>
+			</p:panel>
+			
+			</h:form>
+			
+			<h:form id="itens">
+				<p:dataTable id="setado" var="setor" value="#{actionSetor.listaDeSetores}"
+					selection="#{actionSetor.setorSelecionado}"
+					reflow="true" selectionMode="single"
+					rowKey="#{setor.idSetor}"
+					emptyMessage="Nenhuma setor encontrado"
+					style="margin:5px auto">
+					
+					<p:ajax event="rowSelect" update=":formEditar" oncomplete="PF('dlgEditar').show();" />
+						
+					<f:facet name="header">
+						Setores Cadastros
+					</f:facet>
+	
+					<p:column headerText="Nome">
+						<p:outputLabel value="#{setor.nome}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		
+			<p:dialog id="dlgEditar" modal="true" widgetVar="dlgEditar" height="250px"
+				width="250px" resizable="false">
+
+				<h:form id="formEditar">
+					<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+						<p:column>
+							<p:outputLabel value="Nome" for="nome" />
+							<p:inputText id="nome" required="true"
+								value="#{actionSetor.setorSelecionado.nome}"/>
+						</p:column>
+					</p:panelGrid>
+					<p:commandButton value="Atualizar"
+						actionListener="#{actionSetor.atualizar}"
+						update=":itens:setado growl" oncomplete="PF('dlgEditar').hide();" />
+	
+					<p:commandButton value="Apagar"
+						actionListener="#{actionSetor.apagar}" update=":itens:setado growl"
+						oncomplete="PF('dlgEditar').hide();">
+						<p:confirm header="Confirmar ação" message="Deseja excluir?" icon="ui-icon-alert"/>
+					</p:commandButton>
+					
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+					
+				</h:form>	
+			</p:dialog>
+		
+	</ui:define>
+</ui:composition>
+</html>
+

@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><ui:insert name="title">Titulo da pagina aqui</ui:insert></title>
+	<h:outputStylesheet name="css/estilo.css" />
+	<style>
+		#menu{float:left;margin:auto;width:200px;font-family:Arial, Verdana;font-size: 20px;}
+		#menu ul {list-style-type:none; margin:0;padding:0; background-color:#fff;}
+		#menu li a {display:block; color:#000; padding:8px 0 8px 16px; text-decoration:none;}
+		#menu li a:hover {background-color:#668df1; color:white; font-weight:bold;}
+		
+		#footer{
+			background:#668df1; /* For browsers that do not support gradients */
+  			width:100%;
+  			height:120px;
+  			float:left;
+  			font-family:Arial;
+  			font-weight:bold;
+  			letter-spacing: 5px; 
+  			vertical-align: text-bottom;
+  			text-align:center;
+  			color:#000;
+		}	
+	</style>
+	
+	
+	
+	
+</h:head>
+
+<h:body>
+	<div id="topo">
+		<ui:insert name="topo">
+			<p:graphicImage value="/resources/images/topo2.png" style="margin:0 auto; width:100%"/>
+			<div id="nomeUsuario" style="text-align:right; text-transform:capitalize">
+				<ui:insert name="logout">
+					define aqui o nome do usuario dentro do topo
+				</ui:insert>
+			</div>
+		</ui:insert>
+	</div>
+	
+	<div id="menu" style="width:20%;float:left; margin:5px auto;">
+		<p:panel header="Menu Principal">
+			<ul>
+  				<li><a href="fazped.xhtml">Fazer Pedido</a></li>
+  				<li><a href="pedrealizados.xhtml">Pedidos Realizados</a></li>
+  				<li><a href="dadoscli.xhtml">Dados Cadastrais</a></li>
+  				<li><a href="altsenha.xhtml">Alterar Senha</a></li>
+			</ul>
+		</p:panel>
+	</div>
+	<div id="conteudo" style="width:80%; float:left;margin:5px auto; text-transform: capitalize;">
+		<ui:insert name="conteudo">
+
+		</ui:insert>
+	</div>
+	
+	<div style="clear:both"></div>
+	
+	<div id="footer">
+		<ui:insert name="footer">
+      		Faça seu pedido de forma rápida e pŕatica!
+    	</ui:insert>
+    </div>
+</h:body>
+</html>
