@@ -9,7 +9,7 @@
 	<description>Sistema de entrega para distribuidoras de bebidas</description>
 	<properties>
 		<spring-framework.version>4.1.2.RELEASE</spring-framework.version>
-		<hibernate-framework.version>4.3.8.Final</hibernate-framework.version>
+		<hibernate-framework.version>5.3.20.Final</hibernate-framework.version>
 	</properties>
 
 	<dependencies>
